@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:14.11
+    environment:
+      POSTGRES_DB: rabbit
+      POSTGRES_USER: rabbit_user
+      POSTGRES_PASSWORD: rabbit_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - rabbit_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rabbit_user -d rabbit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rabbit
+      SPRING_DATASOURCE_USERNAME: rabbit_user
+      SPRING_DATASOURCE_PASSWORD: rabbit_pass
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  rabbit_db:

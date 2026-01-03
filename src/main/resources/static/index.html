@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rabbit</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+  <div class="bg">
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <div class="logo">🐇</div>
+          <div>
+            <h1>Rabbit</h1>
+            <p class="subtitle">Simple micro-posts • Spring Boot + Postgres + Docker</p>
+          </div>
+        </div>
+
+        <div class="health">
+          <a class="pill" href="/actuator/health" target="_blank">Health</a>
+          <a class="pill" href="/api/posts/feed" target="_blank">Feed API</a>
+        </div>
+      </header>
+
+      <main class="grid">
+        <!-- Auth card -->
+        <section class="card">
+          <div class="tabs">
+            <button id="tabLogin" class="tab active" type="button">Login</button>
+            <button id="tabSignup" class="tab" type="button">Register</button>
+          </div>
+
+          <!-- Login (token is demo-only; backend returns random token) -->
+          <div id="loginPanel" class="panel">
+            <h2 class="cardTitle">Welcome back</h2>
+            <p class="muted">Demo login returns a token. For posting, we still use <code>X-USER</code>.</p>
+
+            <div class="field">
+              <label>Username</label>
+              <input id="liUser" type="text" placeholder="e.g., chaitu" autocomplete="username" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input id="liPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+
+            <button id="btnLogin" class="btn primary" type="button">Log in</button>
+            <div id="loginMsg" class="msg"></div>
+
+            <div class="hint">
+              Tip: after login, we auto-fill the posting username.
+            </div>
+          </div>
+
+          <!-- Signup -->
+          <div id="signupPanel" class="panel hidden">
+            <h2 class="cardTitle">Create your account</h2>
+            <p class="muted">Password must be at least 6 characters.</p>
+
+            <div class="field">
+              <label>Username</label>
+              <input id="suUser" type="text" placeholder="Pick a username" autocomplete="username" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input id="suPass" type="password" placeholder="Min 6 characters" autocomplete="new-password" />
+            </div>
+
+            <button id="btnSignup" class="btn primary" type="button">Register</button>
+            <div id="signupMsg" class="msg"></div>
+
+            <div class="hint">
+              Already have an account? Switch to <b>Login</b>.
+            </div>
+          </div>
+        </section>
+
+        <!-- Post + feed -->
+        <section class="card">
+          <div class="cardTop">
+            <h2 class="cardTitle">Create a post</h2>
+            <button id="btnRefresh" class="btn ghost" type="button">Refresh</button>
+          </div>
+
+          <div class="field">
+            <label>Posting as (X-USER)</label>
+            <input id="postUser" type="text" placeholder="username (required)" />
+          </div>
+
+          <div class="field">
+            <label>Content</label>
+            <textarea id="postContent" placeholder="Write something… (max 280 chars)"></textarea>
+            <div class="rowBetween">
+              <span class="muted" id="charCount">0 / 280</span>
+              <button id="btnPost" class="btn primary" type="button">Post</button>
+            </div>
+          </div>
+
+          <div id="postMsg" class="msg"></div>
+
+          <hr class="sep" />
+
+          <h3 class="sectionTitle">Feed</h3>
+          <div id="feed" class="feed"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span class="muted">Local demo UI served by Spring Boot static resources.</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script>
+    // Simple tab switch (no frameworks)
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginPanel = document.getElementById('loginPanel');
+    const signupPanel = document.getElementById('signupPanel');
+
+    function setTab(isLogin) {
+      tabLogin.classList.toggle('active', isLogin);
+      tabSignup.classList.toggle('active', !isLogin);
+      loginPanel.classList.toggle('hidden', !isLogin);
+      signupPanel.classList.toggle('hidden', isLogin);
+    }
+    tabLogin.addEventListener('click', () => setTab(true));
+    tabSignup.addEventListener('click', () => setTab(false));
+
+    // character counter
+    const ta = document.getElementById('postContent');
+    const cc = document.getElementById('charCount');
+    ta.addEventListener('input', () => {
+      cc.textContent = `${ta.value.length} / 280`;
+    });
+  </script>
+</body>
+</html>
